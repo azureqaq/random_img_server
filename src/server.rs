@@ -23,7 +23,7 @@ lazy_static::lazy_static! {
 async fn random_img(extract::Extension(store): Extension<Arc<ImageStore>>) -> Redirect {
     // 后去范围内随机id
     let mut rng = rand::thread_rng();
-    let id: usize = rng.gen_range(0..=store.len());
+    let id: usize = rng.gen_range(0..store.len());
     log::info!("获取随机ID: {}", id);
     let uri = format!("/{}/pic.jpg", id);
     Redirect::temporary(&uri)

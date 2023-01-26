@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - ip 配置
 
+### Fixed
+- 修复了随机可能返回404的问题
+
 ## [1.0.0] - 2023-01-26
 ### Added
 - 基础功能
