@@ -1,6 +1,6 @@
 [package]
 name = "img"
-version = "0.1.0"
+version = "1.0.1"
 edition = "2021"
 description = "random img server"
 default-run = "img"
