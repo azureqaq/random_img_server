@@ -61,7 +61,7 @@ pub async fn server(config: ConfigFile) -> Result<()> {
     let addr = SocketAddr::from((config.ip, config.port));
 
     log::info!("绑定到: {}", addr);
-    axum::Server::bind(&addr)
+    axum::Server::try_bind(&addr)?
         .serve(app.into_make_service())
         .await?;
     Ok(())
