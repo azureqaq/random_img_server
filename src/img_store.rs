@@ -90,12 +90,12 @@ impl ImageStore {
         let mut id = 0;
 
         res_paths.into_iter().for_each(|path| {
-            id += 1;
             let img = Image {
                 img_type: ImageType::Jpg,
                 path,
             };
             store.insert(id, img);
+            id += 1;
         });
 
         Ok(Self(store))
@@ -120,7 +120,7 @@ mod img_store_test {
         assert!(store.is_ok());
         let store = store.unwrap();
         assert!(!store.is_empty());
-        assert!(store.contains_key(&1));
-        assert!(store.get(&1).is_some());
+        assert!(store.contains_key(&0));
+        assert!(store.get(&0).is_some());
     }
 }

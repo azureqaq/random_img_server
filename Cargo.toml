@@ -42,7 +42,7 @@ features = [
 version = "0.6"
 default-features = false
 features = [
-    "matched-path", "original-uri", "tokio", "http2"
+    "matched-path", "original-uri", "tokio", "http2", "http1"
 ]
 
 

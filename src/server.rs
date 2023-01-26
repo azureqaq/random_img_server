@@ -1,7 +1,8 @@
 //! API 接口
 
-use std::{net::SocketAddr, sync::Arc, path::PathBuf};
+use std::{net::SocketAddr, sync::Arc};
 
+use crate::img_store::ImageStore;
 use anyhow::Result;
 use axum::{
     extract::{self, Extension},
@@ -9,8 +10,7 @@ use axum::{
     routing, Router,
 };
 use bytes::Bytes;
-
-use crate::img_store::{ImageStore};
+use rand::Rng;
 
 lazy_static::lazy_static! {
     static ref NOTFOUND: Bytes = {
@@ -19,10 +19,13 @@ lazy_static::lazy_static! {
     };
 }
 
-
 /// 获取图片
-async fn random_img() -> Redirect {
-    todo!()
+async fn random_img(extract::Extension(store): Extension<Arc<ImageStore>>) -> Redirect {
+    // 后去范围内随机id
+    let mut rng = rand::thread_rng();
+    let id: usize = rng.gen_range(0..=store.len());
+    let uri = format!("/{}", id);
+    Redirect::temporary(&uri)
 }
 
 /// 通过图片id获取图片
@@ -30,9 +33,16 @@ async fn find_img_by_id(
     extract::Path(id): extract::Path<usize>,
     extract::Extension(store): Extension<Arc<ImageStore>>,
 ) -> axum::response::Result<Bytes> {
-    let img = store.get(&id).ok_or(ErrorResponse::from(NOTFOUND.clone()))?;
-    let res = img.get_bytes().await.map_err(ErrorResponse::from(NOTFOUND.clone()))?;
-    todo!()
+    log::info!("获取ID：{}", id);
+    let img = store
+        .get(&id)
+        .ok_or_else(|| ErrorResponse::from(NOTFOUND.clone()))?
+        .clone();
+    let res = img.get_bytes().await;
+    match res {
+        Err(_) => Err(ErrorResponse::from(NOTFOUND.clone())),
+        Ok(b) => Ok(b),
+    }
 }
 
 pub async fn server(port: u16) -> Result<()> {
