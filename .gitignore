@@ -22,3 +22,5 @@ publish/
 .DS_Store
 ./localized
 venv/
+
+config.toml

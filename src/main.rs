@@ -1,5 +1,6 @@
 use anyhow::Result;
-use img::server;
+use img::config::ConfigFile;
+use img::server::server;
 use simple_logger::SimpleLogger;
 
 #[tokio::main]
@@ -16,6 +17,14 @@ async fn main() {
 }
 
 async fn mma() -> Result<()> {
-    server::server(7878).await?;
+    // let args:Vec<String> = std::env::args().collect();
+    let config_path = std::env::args()
+        .nth(1)
+        .unwrap_or_else(|| "./config.toml".to_string());
+
+    let config = ConfigFile::new_from_file(config_path)?;
+
+    server(config).await?;
+
     Ok(())
 }

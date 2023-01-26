@@ -34,9 +34,9 @@ pub struct ImageStore(AHashMap<usize, Image>);
 
 impl ImageStore {
     /// 获取一个文件夹的图片索引
-    fn get_img_from_dir<P: AsRef<Path>>(path: P) -> Result<Vec<PathBuf>> {
+    fn get_img_from_dir<P: AsRef<Path>>(dir: P) -> Result<Vec<PathBuf>> {
         let mut res = Vec::new();
-        let dir = std::fs::read_dir(path)?;
+        let dir = std::fs::read_dir(dir)?;
         for p in dir {
             let Ok(p) = p else {
                 continue;
@@ -62,12 +62,9 @@ impl ImageStore {
     }
 
     /// 读取 dirs 下的所有图片
-    pub fn new_from_dirs<P: AsRef<Path>>(paths: Vec<P>) -> Result<Self> {
+    pub fn new_from_dirs<P: AsRef<Path>>(dirs: Vec<P>) -> Result<Self> {
         // 先去重
-        let paths: AHashSet<PathBuf> = paths
-            .into_iter()
-            .map(|p| p.as_ref().to_path_buf())
-            .collect();
+        let paths: AHashSet<PathBuf> = dirs.into_iter().map(|p| p.as_ref().to_path_buf()).collect();
         let mut res_paths = Vec::new();
         paths
             .into_iter()
@@ -76,6 +73,7 @@ impl ImageStore {
                     log::warn!("加入文件夹 {} 失败, Error: {}", p.display(), e);
                 }
                 Ok(mut img_paths) => {
+                    log::info!("加入文件夹: {}", p.display());
                     res_paths.append(&mut img_paths);
                 }
             });

@@ -2,7 +2,7 @@
 
 use std::{net::SocketAddr, sync::Arc};
 
-use crate::img_store::ImageStore;
+use crate::{config::ConfigFile, img_store::ImageStore};
 use anyhow::Result;
 use axum::{
     extract::{self, Extension},
@@ -24,7 +24,8 @@ async fn random_img(extract::Extension(store): Extension<Arc<ImageStore>>) -> Re
     // 后去范围内随机id
     let mut rng = rand::thread_rng();
     let id: usize = rng.gen_range(0..=store.len());
-    let uri = format!("/{}", id);
+    log::info!("获取随机ID: {}", id);
+    let uri = format!("/{}/pic.jpg", id);
     Redirect::temporary(&uri)
 }
 
@@ -33,25 +34,31 @@ async fn find_img_by_id(
     extract::Path(id): extract::Path<usize>,
     extract::Extension(store): Extension<Arc<ImageStore>>,
 ) -> axum::response::Result<Bytes> {
-    log::info!("获取ID：{}", id);
     let img = store
         .get(&id)
-        .ok_or_else(|| ErrorResponse::from(NOTFOUND.clone()))?
+        .ok_or_else(|| {
+            log::warn!("未找到: {}", id);
+            ErrorResponse::from(NOTFOUND.clone())
+        })?
         .clone();
     let res = img.get_bytes().await;
     match res {
         Err(_) => Err(ErrorResponse::from(NOTFOUND.clone())),
-        Ok(b) => Ok(b),
+        Ok(b) => {
+            log::info!("获取ID：{}", id);
+            Ok(b)
+        }
     }
 }
 
-pub async fn server(port: u16) -> Result<()> {
-    let img_store = Arc::new(ImageStore::new_from_dirs(vec!["./imgs"])?);
+pub async fn server(config: ConfigFile) -> Result<()> {
+    let dirs = config.dirs.into_iter().collect();
+    let img_store = Arc::new(ImageStore::new_from_dirs(dirs)?);
     let app = Router::new()
         .route("/random", routing::get(random_img))
-        .route("/:id", routing::get(find_img_by_id))
+        .route("/:id/pic.jpg", routing::get(find_img_by_id))
         .layer(Extension(img_store));
-    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+    let addr = SocketAddr::from(([0, 0, 0, 0], config.port));
 
     log::info!("绑定到: {}", addr);
     axum::Server::bind(&addr)
