@@ -9,6 +9,7 @@ use std::path::{Path, PathBuf};
 pub struct ConfigFile {
     /// 文件夹们
     pub dirs: AHashSet<PathBuf>,
+    pub ip: [u8; 4],
     /// 端口
     pub port: u16,
 }
@@ -22,12 +23,12 @@ impl ConfigFile {
     }
 
     /// 从参数传入
-    pub fn new<P: AsRef<Path>>(paths: Vec<P>, port: u16) -> Self {
+    pub fn new<P: AsRef<Path>>(paths: Vec<P>, port: u16, ip: [u8; 4]) -> Self {
         let dirs = paths
             .into_iter()
             .map(|p| p.as_ref().to_path_buf())
             .collect();
-        Self { dirs, port }
+        Self { dirs, port, ip }
     }
 }
 
@@ -38,6 +39,7 @@ impl Default for ConfigFile {
         Self {
             dirs: set,
             port: 7878,
+            ip: [0, 0, 0, 0],
         }
     }
 }

@@ -58,7 +58,7 @@ pub async fn server(config: ConfigFile) -> Result<()> {
         .route("/random", routing::get(random_img))
         .route("/:id/pic.jpg", routing::get(find_img_by_id))
         .layer(Extension(img_store));
-    let addr = SocketAddr::from(([0, 0, 0, 0], config.port));
+    let addr = SocketAddr::from((config.ip, config.port));
 
     log::info!("绑定到: {}", addr);
     axum::Server::bind(&addr)
