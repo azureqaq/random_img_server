@@ -7,7 +7,7 @@ Cargo.lock
 
 # temp dir
 temp/
-imgs/
+/imgs/
 
 # cache dir
 cache/

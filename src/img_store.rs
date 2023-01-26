@@ -114,7 +114,7 @@ mod img_store_test {
 
     #[test]
     fn load_img_test() {
-        let store = ImageStore::new_from_dirs(vec!["./imgs"]);
+        let store = ImageStore::new_from_dirs(vec!["./assets/imgs"]);
         assert!(store.is_ok());
         let store = store.unwrap();
         assert!(!store.is_empty());
