@@ -9,10 +9,8 @@ async fn main() {
         .init()
         .unwrap();
 
-    log::debug!("Hello, Word!");
-    match mma().await {
-        Ok(_) => log::debug!("Good!"),
-        Err(e) => log::error!("Error: {}", e),
+    if let Err(e) = mma().await {
+        log::error!("Err: {}", e);
     }
 }
 
