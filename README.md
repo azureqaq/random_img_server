@@ -1,6 +1,6 @@
 # random_img_server
 
-简单的局域网随机图片 API 服务器
+简单的局域网随机图片 API 服务
 
 以 API 的方式获取(随机)主机多个目录下的 `jpg` 图片
 
@@ -27,12 +27,12 @@
 
 - **注意:** 如果即不指定配置文件，也没有可用的默认配置文件，则会使用去掉 `./imgs_1` 的上述示例配置
 
-### 执行
+### 启动
 - `img <CONFIG_PATH>` 不使用参数则为默认位置: `./config.toml`
 
 ### API 接口
-- 获取随机图片: *GET http://host:port/random*
-- 获取指定的图片: *GET http://host:port/ID/pic.jpg*
+- 获取随机图片: `GET http://host:port/random`
+- 获取指定的图片:` GET http://host:port/ID/pic.jpg` *ID: usize*
 
 ### 调用
 
@@ -50,7 +50,7 @@
   >         with open('img.jpg', 'wb') as fr:
   >             fr.write(result.content)
   >     else:
-  >         print('获取随即图片失败')  
+  >         print('获取随机图片失败')  
   > ```
 
 - Rust
@@ -61,21 +61,29 @@
   > 
   > #[tokio::main]
   > async fn main() -> Result<(), Box<dyn std::error::Error>> {
-  >     // 指定获取第 0 个图片
-  >     let resp = reqwest::get("http://host:port/0/pic.jpg").await?;
-  >     if resp.status().is_success() {
-  >         println!("获取成功");
-  >         // 其他操作 ...
-  >         Ok(())
-  >     } else {
-  >         Err("获取失败")
-  >     }
+  >  // 指定获取第 0 个图片
+  >  let resp = reqwest::get("http://host:port/0/pic.jpg").await?;
+  >  if resp.status().is_success() {
+  >      println!("获取成功");
+  >      // 其他操作 ...
+  >      Ok(())
+  >  } else {
+  >      Err("获取失败")
+  >  }
   > }
   > ```
 
+## 从源码构建
+
+- 安装 `Rust`: [官方教程]([Install Rust - Rust Programming Language (rust-lang.org)](https://www.rust-lang.org/tools/install))
+- 克隆本仓库: `git clone https://github.com/azureqaq/random_img_server.git`
+- 进入项目目录: `cd random_img_server`
+- 编译并运行: `cargo run --release`
+- 仅编译: `cargo build --release` 生成的二进制文件: `./target/release/img.exe` 或者 `./target/release/img`
+
 ## 注意
 
-- 不要在公网环境中使用
+- **不要**在公网环境中使用
 - 仅支持 `jpg` 格式图片
 - 图片数量限制: `<= usize::MAX = 4_294_967_295u32 or 18_446_744_073_709_551_615u64`
 - 图片库更改时，请重启程序

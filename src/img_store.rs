@@ -12,6 +12,9 @@ use std::path::{Path, PathBuf};
 use tokio::fs::File as tokioFile;
 use tokio::io::AsyncReadExt;
 
+/// 图片类型
+///
+/// 目前仅支持 JPG，此部分为了以后升级准备
 #[derive(PartialEq, Eq, Clone, Copy)]
 pub enum ImageType {
     Jpg,
