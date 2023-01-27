@@ -1,6 +1,6 @@
 # random_img_server
 
-简单的随机图片 API 服务器
+简单的局域网随机图片 API 服务器
 
 以 API 的方式获取(随机)主机多个目录下的 `jpg` 图片
 
@@ -16,3 +16,6 @@
 ### API 接口
 - 获取随机图片: GET http://host:port/random
 - 获取指定的图片: GET http://host:port/ID/pic.jpg *替换 ID*
+
+## 注意
+- 不要在公网环境中使用
