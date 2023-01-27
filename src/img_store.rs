@@ -1,4 +1,9 @@
-//! 索引 & 读取本地图片
+//! ## 索引 & 读取本地图片
+//! - Img 记录其在文件系统中的路径，并提供读取到 Bytes 的方法
+//! - ImgStore 用 { usize: Img } 储存图片路径
+//!
+//! ### 注意：
+//! **每次启动不能保证图片顺序一致**
 
 use ahash::{AHashMap, AHashSet};
 use anyhow::{anyhow, Result};

@@ -1,4 +1,9 @@
-//! API 接口
+//! ## API 接口
+//!
+//! 随机图片 + 指定ID图片，如果有错误返回 404 图片
+//!
+//! - GET http://host:port/random
+//! - GET http://host:port/ID/pic.jpg
 
 use std::{net::SocketAddr, sync::Arc};
 
@@ -30,6 +35,8 @@ async fn random_img(extract::Extension(store): Extension<Arc<ImageStore>>) -> Re
 }
 
 /// 通过图片id获取图片
+///
+/// 如果不存在则返回 404 图片
 async fn find_img_by_id(
     extract::Path(id): extract::Path<usize>,
     extract::Extension(store): Extension<Arc<ImageStore>>,
