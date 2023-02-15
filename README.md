@@ -75,7 +75,7 @@
 
 ## 从源码构建
 
-- 安装 `Rust`: [官方教程]([Install Rust - Rust Programming Language (rust-lang.org)](https://www.rust-lang.org/tools/install))
+- 安装 `Rust`: [Install Rust - Rust Programming Language (rust-lang.org)](https://www.rust-lang.org/tools/install)
 - 克隆本仓库: `git clone https://github.com/azureqaq/random_img_server.git`
 - 进入项目目录: `cd random_img_server`
 - 编译并运行: `cargo run --release`
