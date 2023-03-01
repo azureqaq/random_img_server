@@ -5,8 +5,6 @@
 //! - GET http://host:port/random
 //! - GET http://host:port/ID/pic.jpg
 
-use std::{net::SocketAddr, sync::Arc};
-
 use crate::{config::ConfigFile, img_store::ImageStore};
 use anyhow::Result;
 use axum::{
@@ -15,13 +13,22 @@ use axum::{
     routing, Router,
 };
 use bytes::Bytes;
+use chrono::prelude::*;
 use rand::Rng;
+use std::{net::SocketAddr, sync::Arc};
 
 lazy_static::lazy_static! {
     static ref NOTFOUND: Bytes = {
         let img = include_bytes!("../assets/imgs/404.jpg");
         Bytes::from_static(img)
     };
+
+    static ref OFFSET: FixedOffset = FixedOffset::east_opt(8*60*60).unwrap();
+}
+
+fn get_now() -> NaiveDateTime {
+    let now = DateTime::<FixedOffset>::from_utc(Utc::now().naive_utc(), *OFFSET);
+    now.naive_local()
 }
 
 /// 获取图片
@@ -29,7 +36,6 @@ async fn random_img(extract::Extension(store): Extension<Arc<ImageStore>>) -> Re
     // 后去范围内随机id
     let mut rng = rand::thread_rng();
     let id: usize = rng.gen_range(0..store.len());
-    log::info!("获取随机ID: {}", id);
     let uri = format!("/{}/pic.jpg", id);
     Redirect::temporary(&uri)
 }
@@ -44,7 +50,7 @@ async fn find_img_by_id(
     let img = store
         .get(&id)
         .ok_or_else(|| {
-            log::warn!("未找到: {}", id);
+            eprintln!("{} 未找到: {}", get_now(), id);
             ErrorResponse::from(NOTFOUND.clone())
         })?
         .clone();
@@ -52,7 +58,7 @@ async fn find_img_by_id(
     match res {
         Err(_) => Err(ErrorResponse::from(NOTFOUND.clone())),
         Ok(b) => {
-            log::info!("获取ID：{}", id);
+            println!("{} 获取ID：{}", get_now(), id);
             Ok(b)
         }
     }
@@ -67,7 +73,7 @@ pub async fn server(config: ConfigFile) -> Result<()> {
         .layer(Extension(img_store));
     let addr = SocketAddr::from((config.ip, config.port));
 
-    log::info!("绑定到: {}", addr);
+    println!("绑定到: {}", addr);
     axum::Server::try_bind(&addr)?
         .serve(app.into_make_service())
         .await?;

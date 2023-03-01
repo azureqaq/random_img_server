@@ -78,14 +78,14 @@ impl ImageStore {
             .into_iter()
             .for_each(|p| match Self::get_img_from_dir(&p) {
                 Err(e) => {
-                    log::warn!("加入文件夹 {} 失败, Error: {}", p.display(), e);
+                    eprintln!("加入文件夹 {} 失败, Error: {}", p.display(), e);
                 }
                 Ok(mut img_paths) => {
-                    log::info!("加入文件夹: {}", p.display());
+                    println!("加入文件夹: {}", p.display());
                     res_paths.append(&mut img_paths);
                 }
             });
-        log::info!("共加入 {} 个图片", res_paths.len());
+        println!("共加入 {} 个图片", res_paths.len());
 
         if res_paths.is_empty() {
             return Err(anyhow!("应该至少加入一个文件夹"));
