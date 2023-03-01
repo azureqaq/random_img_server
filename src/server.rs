@@ -50,7 +50,7 @@ async fn find_img_by_id(
     let img = store
         .get(&id)
         .ok_or_else(|| {
-            eprintln!("{} 未找到: {}", get_now(), id);
+            eprintln!("{} 未找到: {}", get_now().format("%Y-%m-%d %H:%M:%S"), id);
             ErrorResponse::from(NOTFOUND.clone())
         })?
         .clone();
@@ -58,7 +58,7 @@ async fn find_img_by_id(
     match res {
         Err(_) => Err(ErrorResponse::from(NOTFOUND.clone())),
         Ok(b) => {
-            println!("{} 获取ID：{}", get_now(), id);
+            println!("{} 获取ID：{}", get_now().format("%Y-%m-%d %H:%M:%S"), id);
             Ok(b)
         }
     }
@@ -73,7 +73,7 @@ pub async fn server(config: ConfigFile) -> Result<()> {
         .layer(Extension(img_store));
     let addr = SocketAddr::from((config.ip, config.port));
 
-    println!("绑定到: {}", addr);
+    println!("\n绑定到: {}\n", addr);
     axum::Server::try_bind(&addr)?
         .serve(app.into_make_service())
         .await?;
